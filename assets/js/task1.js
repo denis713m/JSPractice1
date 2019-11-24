@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 function min(val1,val2) {
     let a = +val1;
