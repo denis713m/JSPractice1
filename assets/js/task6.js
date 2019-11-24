@@ -39,7 +39,9 @@ class User{
     }
 
     static checkPermission(action, userExecutor, user){
-        if(userExecutor === user){return User.checkSelfPermission(action, userExecutor)}
+        if(userExecutor === user){
+            return User.checkSelfPermission(action, userExecutor)
+        }
         let rights = new Map();
         rights.set(ROLE.ADMIN, new Map().set(ACTION.CREATE, [ROLE.MODERATOR, ROLE.USER]));
         rights.get(ROLE.ADMIN).set(ACTION.READ, [ROLE.ADMIN, ROLE.MODERATOR, ROLE.USER]);
@@ -63,6 +65,7 @@ class User{
 
     //метод для задачи два
     static checkSelfPermission(action, userExecutor) {
+
         let rights = new Map();
         rights.set(ROLE.ADMIN, [ACTION.READ, ACTION.UPDATE]);
         rights.set(ROLE.MODERATOR, [ACTION.READ, ACTION.UPDATE]);
