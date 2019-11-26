@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 const ROLE = Object.freeze({
     ADMIN: "ADMIN",
@@ -13,33 +13,55 @@ const ACTION = Object.freeze({
     DELETE: "DELETE",
 });
 
-let roleRights = new Map();
-roleRights.set(ACTION.CREATE,[ROLE.ADMIN, ROLE.MODERATOR]);
-roleRights.set(ACTION.READ,[ROLE.ADMIN, ROLE.MODERATOR, ROLE.USER]);
-roleRights.set(ACTION.UPDATE, [ROLE.MODERATOR]);
-roleRights.set(ACTION.DELETE, [ROLE.ADMIN]);
+const RIGHTS = new Map();
+
+RIGHTS.set(
+    ACTION.CREATE, [
+        ROLE.ADMIN,
+        ROLE.MODERATOR,
+    ]);
+
+RIGHTS.set(
+    ACTION.READ, [
+        ROLE.ADMIN,
+        ROLE.MODERATOR,
+        ROLE.USER,
+    ]);
+
+RIGHTS.set(
+    ACTION.UPDATE, [
+        ROLE.MODERATOR,
+    ]);
+
+RIGHTS.set(
+    ACTION.DELETE, [
+        ROLE.ADMIN,
+    ]);
 
 /*=====================================================================================================
 STEP 1*/
 
 function checkPermission(action, role) {
-    let rights = roleRights.get(action).indexOf(role);
-    if(rights === -1) return false;
-    return true;
+
+    if (RIGHTS.has(action)) {
+        return RIGHTS.get(action).includes(role);
+    }
+    return false;
 }
+
 
 /*=====================================================================================================
 STEP 2*/
-class User{
-    constructor(name,surname,email, role){
+class User {
+    constructor(name, surname, email, role) {
         this.name = name;
         this.surname = surname;
         this.email = email;
         this.role = role;
     }
 
-    static checkPermission(action, userExecutor, user){
-        if(userExecutor === user){
+    static checkPermission(action, userExecutor, user) {
+        if (userExecutor === user) {
             return User.checkSelfPermission(action, userExecutor)
         }
         let rights = new Map();
@@ -54,10 +76,10 @@ class User{
         rights.get(ROLE.MODERATOR).set(ACTION.READ, [ROLE.MODERATOR, ROLE.USER]);
         rights.get(ROLE.MODERATOR).set(ACTION.UPDATE, [ROLE.USER]);
         let executorAction = rights.get(userExecutor.role).get(action);
-        if(executorAction == null) return false;
+        if (executorAction == null) return false;
         let right = executorAction.indexOf(user.role);
 
-        if(right === -1) return false;
+        if (right === -1) return false;
         return true;
 
 
@@ -72,7 +94,7 @@ class User{
         rights.set(ROLE.USER, [ACTION.READ, ACTION.UPDATE, ACTION.DELETE]);
 
         let right = rights.get(userExecutor.role).indexOf(action);
-        if(right === -1) return false;
+        if (right === -1) return false;
         return true;
 
 
